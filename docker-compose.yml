@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  openvscode-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: openvscode-server:latest
+    container_name: openvscode-server
+
+    # Port mapping
+    ports:
+      - "3000:3000"
+
+    # Volumes for persistent data
+    volumes:
+      # Workspace directory
+      - ./workspace:/home/openvscode/workspace:cached
+      # Extensions and settings (persistent)
+      - openvscode-extensions:/home/openvscode/.openvscode-server
+
+    # Environment variables
+    environment:
+      # Set connection token for security (recommended for production)
+      - CONNECTION_TOKEN=${CONNECTION_TOKEN:-}
+      # Optional: custom extensions directory
+      # - EXTENSIONS_GALLERY_SERVICE_URL=https://open-vsx.org/vscode/gallery
+
+    # Resource limits (adjust based on your needs)
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+    # Override default command if needed
+    # Uncomment and modify for custom configuration
+    # command:
+    #   - node
+    #   - /home/openvscode/server/out/server-main.js
+    #   - --host
+    #   - 0.0.0.0
+    #   - --port
+    #   - "3000"
+    #   - --connection-token
+    #   - ${CONNECTION_TOKEN}
+
+# Named volumes for data persistence
+volumes:
+  openvscode-extensions:
+    driver: local
+
+# Optional: Networks for service isolation
+networks:
+  default:
+    name: openvscode-network
+
