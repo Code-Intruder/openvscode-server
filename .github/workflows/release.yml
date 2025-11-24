@@ -1,0 +1,44 @@
+name: Build & Release OpenVSCode Custom
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set VERSION from tag
+        id: vars
+        run: echo "VERSION=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Build export image (tar.gz)
+        run: |
+          docker build \
+            --target export \
+            --build-arg VERSION=${{ steps.vars.outputs.VERSION }} \
+            -t openvscode-custom-export:${{ steps.vars.outputs.VERSION }} .
+
+      - name: Create container and copy artifact
+        run: |
+          docker create --name openvscode-export openvscode-custom-export:${{ steps.vars.outputs.VERSION }}
+          docker cp openvscode-export:/export/openvscode-custom-${{ steps.vars.outputs.VERSION }}-linux-x64.tar.gz .
+          docker rm openvscode-export
+          ls -lh
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.vars.outputs.VERSION }}
+          name: ${{ steps.vars.outputs.VERSION }}
+          draft: false
+          prerelease: false
+          files: |
+            openvscode-custom-${{ steps.vars.outputs.VERSION }}-linux-x64.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
