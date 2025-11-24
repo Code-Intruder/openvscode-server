@@ -135,7 +135,8 @@ export class NativeEditContext extends AbstractEditContext {
 				this._onType(this._viewController, { text: '\n', replacePrevCharCnt: 0, replaceNextCharCnt: 0, positionDelta: 0 });
 			}
 		}));
-		this._register(addDisposableListener(this.domNode.domNode, 'paste', (e) => {
+		// CUSTOM: Deshabilitado Paste - entorno educativo donde los usuarios deben escribir código manualmente
+		/* this._register(addDisposableListener(this.domNode.domNode, 'paste', (e) => {
 			this.logService.trace('NativeEditContext#paste');
 			e.preventDefault();
 			if (!e.clipboardData) {
@@ -159,7 +160,7 @@ export class NativeEditContext extends AbstractEditContext {
 			}
 			this.logService.trace('NativeEditContext#paste (before viewController.paste)');
 			this._viewController.paste(text, pasteOnNewLine, multicursorText, mode);
-		}));
+		})); */
 
 		// Edit context events
 		this._register(editContextAddDisposableListener(this._editContext, 'textformatupdate', (e) => this._handleTextFormatUpdate(e)));

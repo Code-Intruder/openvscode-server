@@ -9,7 +9,8 @@ import { WorkbenchPhase, registerWorkbenchContribution2 } from '../../../../../c
 import { IEditorService } from '../../../../../services/editor/common/editorService.js';
 import { NOTEBOOK_CELL_EDITABLE, NOTEBOOK_EDITOR_EDITABLE, NOTEBOOK_EDITOR_FOCUSED, NOTEBOOK_OUTPUT_FOCUSED } from '../../../common/notebookContextKeys.js';
 import { cellRangeToViewCells, expandCellRangesWithHiddenCells, getNotebookEditorFromEditorPane, ICellViewModel, INotebookEditor } from '../../notebookBrowser.js';
-import { CopyAction, CutAction, PasteAction } from '../../../../../../editor/contrib/clipboard/browser/clipboard.js';
+// CUSTOM: PasteAction deshabilitado - entorno educativo
+import { CopyAction, CutAction } from '../../../../../../editor/contrib/clipboard/browser/clipboard.js';
 import { IClipboardService } from '../../../../../../platform/clipboard/common/clipboardService.js';
 import { cloneNotebookCellTextModel, NotebookCellTextModel } from '../../../common/model/notebookCellTextModel.js';
 import { CellEditType, ICellEditOperation, ISelectionState, SelectionStateType } from '../../../common/notebookCommon.js';
@@ -105,9 +106,10 @@ CopyAction?.addImplementation(PRIORITY, 'notebook-webview', accessor => {
 	return withWebview(accessor, webview => webview.copy());
 });
 
-PasteAction?.addImplementation(PRIORITY, 'notebook-webview', accessor => {
+// CUSTOM: Deshabilitado Paste - entorno educativo
+/* PasteAction?.addImplementation(PRIORITY, 'notebook-webview', accessor => {
 	return withWebview(accessor, webview => webview.paste());
-});
+}); */
 
 CutAction?.addImplementation(PRIORITY, 'notebook-webview', accessor => {
 	return withWebview(accessor, webview => webview.cut());
@@ -301,11 +303,12 @@ export class NotebookClipboardContribution extends Disposable {
 			}));
 		}
 
-		if (PasteAction) {
+		// CUSTOM: Deshabilitado Paste - entorno educativo
+		/* if (PasteAction) {
 			this._register(PasteAction.addImplementation(PRIORITY, 'notebook-clipboard', accessor => {
 				return this.runPasteAction(accessor);
 			}));
-		}
+		} */
 
 		if (CutAction) {
 			this._register(CutAction.addImplementation(PRIORITY, 'notebook-clipboard', accessor => {

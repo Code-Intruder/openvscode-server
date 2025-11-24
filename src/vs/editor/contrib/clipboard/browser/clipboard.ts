@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as browser from '../../../../base/browser/browser.js';
 import { getActiveDocument, getActiveWindow } from '../../../../base/browser/dom.js';
 import { KeyCode, KeyMod } from '../../../../base/common/keyCodes.js';
 import * as platform from '../../../../base/common/platform.js';
@@ -34,7 +33,7 @@ const supportsCopy = (platform.isNative || document.queryCommandSupported('copy'
 // Firefox only supports navigator.clipboard.readText() in browser extensions.
 // See https://developer.mozilla.org/en-US/docs/Web/API/Clipboard/readText#Browser_compatibility
 // When loading over http, navigator.clipboard can be undefined. See https://github.com/microsoft/monaco-editor/issues/2313
-const supportsPaste = (typeof navigator.clipboard === 'undefined' || browser.isFirefox) ? document.queryCommandSupported('paste') : true;
+// CUSTOM: supportsPaste eliminado - Paste deshabilitado en entorno educativo
 
 function registerCommand<T extends Command>(command: T): T {
 	command.register();
@@ -118,7 +117,9 @@ MenuRegistry.appendMenuItem(MenuId.EditorContext, { submenu: MenuId.EditorContex
 MenuRegistry.appendMenuItem(MenuId.EditorContext, { submenu: MenuId.EditorContextShare, title: nls.localize2('share', "Share"), group: '11_share', order: -1, when: ContextKeyExpr.and(ContextKeyExpr.notEquals('resourceScheme', 'output'), EditorContextKeys.editorTextFocus) });
 MenuRegistry.appendMenuItem(MenuId.ExplorerContext, { submenu: MenuId.ExplorerContextShare, title: nls.localize2('share', "Share"), group: '11_share', order: -1 });
 
-export const PasteAction = supportsPaste ? registerCommand(new MultiCommand({
+// CUSTOM: Deshabilitado Paste - entorno educativo donde los usuarios deben escribir código manualmente
+export const PasteAction: any = undefined;
+/* export const PasteAction = supportsPaste ? registerCommand(new MultiCommand({
 	id: 'editor.action.clipboardPasteAction',
 	precondition: undefined,
 	kbOpts: (
@@ -154,7 +155,7 @@ export const PasteAction = supportsPaste ? registerCommand(new MultiCommand({
 		when: EditorContextKeys.writable,
 		order: 4,
 	}]
-})) : undefined;
+})) : undefined; */
 
 class ExecCommandCopyWithSyntaxHighlightingAction extends EditorAction {
 

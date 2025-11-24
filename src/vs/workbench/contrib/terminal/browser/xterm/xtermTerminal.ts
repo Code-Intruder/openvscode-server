@@ -280,13 +280,16 @@ export class XtermTerminal extends Disposable implements IXtermTerminal, IDetach
 		this.raw.loadAddon(this._decorationAddon);
 		this._shellIntegrationAddon = new ShellIntegrationAddon(options.shellIntegrationNonce ?? '', options.disableShellIntegrationReporting, this._onDidExecuteText, this._telemetryService, this._logService);
 		this.raw.loadAddon(this._shellIntegrationAddon);
+		// CUSTOM: Deshabilitado ClipboardAddon para bloquear Paste en terminal - entorno educativo
+		// Solo permitimos copy (writeText), pero no paste (readText)
 		this._xtermAddonLoader.importAddon('clipboard').then(ClipboardAddon => {
 			if (this._store.isDisposed) {
 				return;
 			}
 			this._clipboardAddon = this._instantiationService.createInstance(ClipboardAddon, undefined, {
 				async readText(type: ClipboardSelectionType): Promise<string> {
-					return _clipboardService.readText(type === 'p' ? 'selection' : 'clipboard');
+					// CUSTOM: Bloqueamos la lectura del portapapeles para deshabilitar paste
+					return '';
 				},
 				async writeText(type: ClipboardSelectionType, text: string): Promise<void> {
 					return _clipboardService.writeText(text, type === 'p' ? 'selection' : 'clipboard');

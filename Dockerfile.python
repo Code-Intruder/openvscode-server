@@ -1,0 +1,67 @@
+# ============================================================================
+# OpenVSCode Server with Python 3 + Python Extension
+# ============================================================================
+# Este Dockerfile extiende la imagen base de openvscode-server y agrega:
+# - Python 3 (última versión disponible)
+# - pip (gestor de paquetes de Python)
+# - Extensión de Python para VSCode pre-instalada
+# ============================================================================
+
+FROM ghcr.io/code-intruder/openvscode-server:latest
+
+# Cambiar a root para instalar paquetes del sistema
+USER root
+
+# Instalar Python 3, pip y dependencias necesarias
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    python3-pip \
+    python3-venv \
+    python3-dev \
+    build-essential \
+    git \
+    unzip \
+    jq \
+    && rm -rf /var/lib/apt/lists/*
+
+# Crear enlaces simbólicos para que 'python' y 'pip' apunten a python3/pip3
+RUN ln -sf /usr/bin/python3 /usr/bin/python && \
+    ln -sf /usr/bin/pip3 /usr/bin/pip
+
+# Actualizar pip a la última versión
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# Cambiar permisos de las extensiones
+# RUN chown -R openvscode:openvscode /opt/openvscode-server/extensions
+
+# Cambiar al usuario openvscode
+USER openvscode
+
+# Variables de entorno para Python
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Verificar instalaciones
+RUN python --version && \
+    pip --version && \
+    echo "✓ Python y pip instalados correctamente"
+
+# Exponer puerto
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:3000/healthz || curl -f http://localhost:3000/ || exit 1
+
+# Workspace por defecto
+WORKDIR /home/openvscode/workspace
+
+# Instalar extensión de Python pre-incrustada
+# Descargamos directamente desde Open VSX Registry usando jq para parsear el JSON
+RUN node /opt/openvscode-server/out/server-main.js --install-extension ms-python.python
+
+# Comando por defecto (hereda del base)
+# CMD ya está definido en la imagen base
+

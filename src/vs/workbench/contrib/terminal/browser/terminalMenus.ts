@@ -136,7 +136,8 @@ export function setupTerminalMenus(): void {
 					order: 2
 				}
 			},
-			{
+			// CUSTOM: Deshabilitado Paste en terminal - entorno educativo
+			/* {
 				id: MenuId.TerminalInstanceContext,
 				item: {
 					command: {
@@ -146,7 +147,7 @@ export function setupTerminalMenus(): void {
 					group: TerminalContextMenuGroup.Edit,
 					order: 3
 				}
-			},
+			}, */
 			{
 				id: MenuId.TerminalInstanceContext,
 				item: {
@@ -256,7 +257,8 @@ export function setupTerminalMenus(): void {
 					order: 2
 				}
 			},
-			{
+			// CUSTOM: Deshabilitado Paste en terminal editor - entorno educativo
+			/* {
 				id: MenuId.TerminalEditorInstanceContext,
 				item: {
 					command: {
@@ -266,7 +268,7 @@ export function setupTerminalMenus(): void {
 					group: TerminalContextMenuGroup.Edit,
 					order: 3
 				}
-			},
+			}, */
 			{
 				id: MenuId.TerminalEditorInstanceContext,
 				item: {

@@ -35,7 +35,7 @@ import { IME } from '../../../../../base/common/ime.js';
 import { IKeybindingService } from '../../../../../platform/keybinding/common/keybinding.js';
 import { IInstantiationService } from '../../../../../platform/instantiation/common/instantiation.js';
 import { AbstractEditContext } from '../editContext.js';
-import { ICompositionData, IPasteData, ITextAreaInputHost, TextAreaInput, TextAreaWrapper } from './textAreaEditContextInput.js';
+import { ICompositionData, ITextAreaInputHost, TextAreaInput, TextAreaWrapper } from './textAreaEditContextInput.js';
 import { ariaLabelForScreenReaderContent, newlinecount, SimplePagedScreenReaderStrategy } from '../screenReaderUtils.js';
 import { ClipboardDataToCopy, getDataToCopy } from '../clipboardUtils.js';
 import { _debugComposition, ITypeData, TextAreaState } from './textAreaEditContextState.js';
@@ -288,7 +288,8 @@ export class TextAreaEditContext extends AbstractEditContext {
 			this._viewController.emitKeyUp(e);
 		}));
 
-		this._register(this._textAreaInput.onPaste((e: IPasteData) => {
+		// CUSTOM: Deshabilitado Paste - entorno educativo donde los usuarios deben escribir código manualmente
+		/* this._register(this._textAreaInput.onPaste((e: IPasteData) => {
 			let pasteOnNewLine = false;
 			let multicursorText: string[] | null = null;
 			let mode: string | null = null;
@@ -298,7 +299,7 @@ export class TextAreaEditContext extends AbstractEditContext {
 				mode = e.metadata.mode;
 			}
 			this._viewController.paste(e.text, pasteOnNewLine, multicursorText, mode);
-		}));
+		})); */
 
 		this._register(this._textAreaInput.onCut(() => {
 			this._viewController.cut();

@@ -1,0 +1,63 @@
+# Docker Compose para OpenVSCode Server con Python
+#
+# Uso:
+#   docker-compose -f docker-compose.python.yml up -d
+#
+version: '3.8'
+
+services:
+  openvscode-python:
+    image: ghcr.io/code-intruder/openvscode-server:python
+    container_name: openvscode-python
+
+    ports:
+      - "3000:3000"
+
+    volumes:
+      # Workspace persistente del usuario
+      - openvscode_workspace:/home/openvscode/workspace
+      # Configuración y extensiones del usuario
+      - openvscode_config:/home/openvscode/.openvscode-server
+      # Paquetes de Python del usuario (opcional)
+      - python_packages:/home/openvscode/.local
+
+    environment:
+      - CONNECTION_TOKEN=${CONNECTION_TOKEN:-}  # Token opcional desde .env
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+
+    # Seguridad
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+
+    # Límites de recursos
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 1G
+
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  openvscode_workspace:
+    driver: local
+  openvscode_config:
+    driver: local
+  python_packages:
+    driver: local
+
