@@ -43,5 +43,4 @@ jobs:
           prerelease: false
           files: |
             openvscode-custom-${{ steps.vars.outputs.VERSION }}-linux-x64.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_RELEASE_TOKEN }}
